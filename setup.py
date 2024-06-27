@@ -16,7 +16,7 @@ VERSION = None
 
 about = {}
 
-with open("README.md", "r") as fh:
+with open("READMEa.md", "r") as fh:
     about["long_description"] = fh.read()
 
 root = os.path.abspath(os.path.dirname(__file__))

@@ -1,54 +1,55 @@
-# Binance Public API Connector Python
-[![PyPI version](https://img.shields.io/pypi/v/binance-connector)](https://pypi.python.org/pypi/binance-connector)
-[![Python version](https://img.shields.io/pypi/pyversions/binance-connector)](https://www.python.org/downloads/)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://binance-connector.readthedocs.io/en/stable/)
-[![Code Style](https://img.shields.io/badge/code_style-black-black)](https://black.readthedocs.io/en/stable/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This is a lightweight library that works as a connector to [Binance public API](https://github.com/binance/binance-spot-api-docs)
+---
 
-- Supported APIs:
-    - `/api/*`
-    - `/sapi/*`
-    - Spot Websocket Market Stream
-    - Spot User Data Stream
-    - Spot WebSocket API
-- Inclusion of test cases and examples
-- Customizable base URL, request timeout and HTTP proxy
-- Response metadata can be displayed
+# Binance 公共 API 连接器 Python
 
-## Installation
+PyPI 版本 | Python 版本 | 文档 | 代码风格 | 许可证 MIT
+
+这是一个轻量级库，用作 Binance 公共 API 的连接器
+
+### 支持的 API：
+- `/api/*`
+- `/sapi/*`
+- 现货 Websocket 市场流
+- 现货用户数据流
+- 现货 WebSocket API
+- 包含测试用例和示例
+- 可定制的基础 URL、请求超时和 HTTP 代理
+- 可以显示响应元数据
+
+### 安装
 
 ```bash
 pip install binance-connector
 ```
 
-## Documentation
+### 文档
 
 [https://binance-connector.readthedocs.io](https://binance-connector.readthedocs.io)
 
-## RESTful APIs
+## RESTful API
 
-Usage examples:
+### 使用示例：
+
 ```python
 from binance.spot import Spot
 
 client = Spot()
 
-# Get server timestamp
+# 获取服务器时间戳
 print(client.time())
-# Get klines of BTCUSDT at 1m interval
+# 获取 BTCUSDT 1 分钟间隔的 k线
 print(client.klines("BTCUSDT", "1m"))
-# Get last 10 klines of BNBUSDT at 1h interval
+# 获取 BNBUSDT 1 小时间隔的最近 10 个 k线
 print(client.klines("BNBUSDT", "1h", limit=10))
 
-# API key/secret are required for user data endpoints
+# 用户数据端点需要 API key/secret
 client = Spot(api_key='<api_key>', api_secret='<api_secret>')
 
-# Get account and balance information
+# 获取账户和余额信息
 print(client.account())
 
-# Post a new order
+# 新建订单
 params = {
     'symbol': 'BTCUSDT',
     'side': 'SELL',
@@ -61,31 +62,33 @@ params = {
 response = client.new_order(**params)
 print(response)
 ```
-Please find `examples` folder to check for more endpoints.
-- In order to set your API and Secret Key for use of the examples, create a file `examples/config.ini` with your keys.
-- Eg:
-    ```ini
-    # examples/config.ini
-    [keys]
-    api_key=abc123456
-    api_secret=cba654321
-    ```
 
-### Authentication
+请查看 `examples` 文件夹以获取更多端点示例。
 
-Binance supports HMAC, RSA and ED25519 API authentication.
+为了设置示例使用的 API 和 Secret Key，创建一个 `examples/config.ini` 文件并填写你的密钥。
+例如：
+
+```ini
+# examples/config.ini
+[keys]
+api_key=abc123456
+api_secret=cba654321
+```
+
+### 身份验证
+
+Binance 支持 HMAC、RSA 和 ED25519 API 身份验证。
 
 ```python
-
-# HMAC: pass API key and secret
+# HMAC：传递 API key 和 secret
 client = Client(api_key, api_secret)
 print(client.account())
 
-# RSA Keys
+# RSA 密钥
 client = Client(api_key=api_key, private_key=private_key)
 print(client.account())
 
-# ED25519 Keys
+# ED25519 密钥
 api_key = ""
 private_key = "./private_key.pem"
 private_key_pass = "<password_if_applicable>"
@@ -95,22 +98,22 @@ with open(private_key, 'rb') as f:
 
 spot_client = Client(api_key=api_key, private_key=private_key, private_key_pass=private_key_pass)
 
-# Encrypted RSA Key
+# 加密的 RSA 密钥
 client = Client(api_key=api_key, private_key=private_key, private_key_pass='password')
 print(client.account())
 ```
-Please find `examples/spot/wallet/account_snapshot.py` for more details on ED25519.
-Please find `examples/spot/trade/get_account.py` for more details on RSA.
 
-### Testnet
+请查看 `examples/spot/wallet/account_snapshot.py` 获取更多关于 ED25519 的细节。请查看 `examples/spot/trade/get_account.py` 获取更多关于 RSA 的细节。
 
-[Spot Testnet](https://testnet.binance.vision/) is available, it can be used to test `/api/*` endpoints.
+### 测试网络
 
-- `/sapi/*` endpoints are not available.
-- No UI.
-- Steps to setup testnet API key.  [https://dev.binance.vision/t/99](https://dev.binance.vision/t/99)
+现货测试网络可用，可用于测试 `/api/*` 端点。
 
-To use testnet:
+`/sapi/*` 端点不可用。无用户界面。
+设置测试网络 API 密钥的步骤： [https://dev.binance.vision/t/99](https://dev.binance.vision/t/99)
+
+要使用测试网络：
+
 ```python
 from binance.spot import Spot as Client
 
@@ -118,33 +121,30 @@ client = Client(base_url='https://testnet.binance.vision')
 print(client.time())
 ```
 
-### Base URL
+### 基础 URL
 
-If `base_url` is not provided, it defaults to `api.binance.com`.<br/>
-It's recommended to pass in the `base_url` parameter, even in production as Binance provides alternative URLs
-in case of performance issues:
+如果未提供 `base_url`，则默认为 `api.binance.com`。
+建议在生产环境中传入 `base_url` 参数，因为 Binance 提供了备用 URL 以防止性能问题：
+
 - `https://api1.binance.com`
 - `https://api2.binance.com`
 - `https://api3.binance.com`
 
-### Optional parameters
+### 可选参数
 
-PEP8 suggests _lowercase with words separated by underscores_, but for this connector,
-the methods' optional parameters should follow their exact naming as in the API documentation.
+PEP8 建议使用小写并用下划线分隔单词，但对于此连接器，方法的可选参数应遵循 API 文档中的确切命名。
 
 ```python
-# Recognised parameter name
+# 认可的参数名
 response = client.cancel_oco_order('BTCUSDT', orderListId=1)
 
-# Unrecognised parameter name
+# 不认可的参数名
 response = client.cancel_oco_order('BTCUSDT', order_list_id=1)
 ```
 
-### RecvWindow parameter
+### RecvWindow 参数
 
-Additional parameter `recvWindow` is available for endpoints requiring signature.<br/>
-It defaults to `5000` (milliseconds) and can be any value lower than `60000`(milliseconds).
-Anything beyond the limit will result in an error response from Binance server.
+需要签名的端点可用的附加参数 `recvWindow`。默认为 5000（毫秒），可以是任何小于 60000（毫秒）的值。超过此限制将导致 Binance 服务器返回错误响应。
 
 ```python
 from binance.spot import Spot as Client
@@ -153,35 +153,32 @@ client = Client(api_key, api_secret)
 response = client.get_order('BTCUSDT', orderId=11, recvWindow=10000)
 ```
 
-### Timeout
+### 超时
 
-`timeout` is available to be assigned with the number of seconds you find most appropriate to wait for a server response.<br/>
-Please remember the value as it won't be shown in error message _no bytes have been received on the underlying socket for timeout seconds_.<br/>
-By default, `timeout` is None. Hence, requests do not time out.
+`timeout` 可用于设置等待服务器响应的秒数。
+请记住该值，因为当在超时秒数内未接收到任何数据时，它不会显示在错误消息中。默认情况下，`timeout` 为 `None`，因此请求不会超时。
 
 ```python
 from binance.spot import Spot as Client
 
-client= Client(timeout=1)
+client = Client(timeout=1)
 ```
 
-### Proxy
+### 代理
 
-Proxy is supported.
+支持代理。
 
 ```python
 from binance.spot import Spot as Client
 
 proxies = { 'https': 'http://1.2.3.4:8080' }
 
-client= Client(proxies=proxies)
+client = Client(proxies=proxies)
 ```
 
+### 响应元数据
 
-### Response Metadata
-
-The Binance API server provides weight usages in the headers of each response.
-You can display them by initializing the client with `show_limit_usage=True`:
+Binance API 服务器在每个响应的头部提供权重使用情况。你可以通过初始化客户端时设置 `show_limit_usage=True` 来显示它们：
 
 ```python
 from binance.spot import Spot as Client
@@ -189,56 +186,60 @@ from binance.spot import Spot as Client
 client = Client(show_limit_usage=True)
 print(client.time())
 ```
-returns:
 
-```python
+返回：
+
+```json
 {'data': {'serverTime': 1587990847650}, 'limit_usage': {'x-mbx-used-weight': '31', 'x-mbx-used-weight-1m': '31'}}
 ```
-You can also display full response metadata to help in debugging:
+
+你还可以显示完整的响应元数据以帮助调试：
 
 ```python
 client = Client(show_header=True)
 print(client.time())
 ```
 
-returns:
+返回：
 
-```python
+```json
 {'data': {'serverTime': 1587990847650}, 'header': {'Context-Type': 'application/json;charset=utf-8', ...}}
 ```
 
-If `ClientError` is received, it'll display full response meta information.
+如果收到 `ClientError`，它会显示完整的响应元信息。
 
-### Display logs
+### 显示日志
 
-Setting the log level to `DEBUG` will log the request URL, payload and response text.
+将日志级别设置为 `DEBUG` 会记录请求 URL、负载和响应文本。
 
-### Error
+### 错误
 
-There are 2 types of error returned from the library:
+库中返回的错误有两种类型：
+
 - `binance.error.ClientError`
-    - This is thrown when server returns `4XX`, it's an issue from client side.
-    - It has 5 properties:
-        - `status_code` - HTTP status code
-        - `error_code` - Server's error code, e.g. `-1102`
-        - `error_message` - Server's error message, e.g. `Unknown order sent.`
-        - `header` - Full response header.
-        - `error_data`* - Additional detailed data which supplements the `error_message`.
-            - **Only applicable on select endpoints, eg. `cancelReplace`*
+  - 当服务器返回 4XX 时抛出，这是客户端的问题。
+  - 它有 5 个属性：
+    - `status_code` - HTTP 状态码
+    - `error_code` - 服务器的错误代码，例如 -1102
+    - `error_message` - 服务器的错误消息，例如 "Unknown order sent."
+    - `header` - 完整的响应头
+    - `error_data`* - 补充 `error_message` 的详细数据。
+  - *仅适用于某些端点，例如 `cancelReplace`
+
 - `binance.error.ServerError`
-    - This is thrown when server returns `5XX`, it's an issue from server side.
+  - 当服务器返回 5XX 时抛出，这是服务器的问题。
 
 ## Websocket
 
-### Connector v3
+### 连接器 v3
 
-WebSocket can be established through either of the following types of connections:
-- WebSocket API (`https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-api.md`)
-- WebSocket Stream (`https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md`)
+WebSocket 可以通过以下类型的连接来建立：
+
+- [WebSocket API](https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-api.md)
+- [WebSocket Stream](https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md)
 
 ```python
-
-# WebSocket API Client
+# WebSocket API 客户端
 from binance.websocket.spot.websocket_api import SpotWebsocketAPIClient
 
 def message_handler(_, message):
@@ -254,8 +255,7 @@ my_client.stop()
 ```
 
 ```python
-
-# WebSocket Stream Client
+# WebSocket 流客户端
 from binance.websocket.spot.websocket_stream import SpotWebsocketStreamClient
 
 def message_handler(_, message):
@@ -263,45 +263,45 @@ def message_handler(_, message):
 
 my_client = SpotWebsocketStreamClient(on_message=message_handler)
 
-# Subscribe to a single symbol stream
+# 订阅单个符号流
 my_client.agg_trade(symbol="bnbusdt")
 time.sleep(5)
 logging.info("closing ws connection")
 my_client.stop()
 ```
 
-#### Proxy
+### 代理
 
-Proxy is supported for both WebSocket API and WebSocket Stream.
+WebSocket API 和 WebSocket 流都支持代理。
 
-To use it, pass in the `proxies` parameter when initializing the client.
+要使用它，在初始化客户端时传递 `proxies` 参数。
 
-The format of the `proxies` parameter is the same as the one used in the Spot RESTful API.
+代理参数的格式与现货 RESTful API 中使用的格式相同。
 
-It consists on a dictionary with the following format, where the key is the type of the proxy and the value is the proxy URL:
+它由一个字典组成，其中键是代理类型，值是代理 URL：
 
-For websockets, the proxy type is `http`.
+对于 websockets，代理类型为 `http`。
 
 ```python
 proxies = { 'http': 'http://1.2.3.4:8080' }
 ```
 
-You can also use authentication for the proxy by adding the `username` and `password` parameters to the proxy URL:
+你还可以通过在代理 URL 中添加用户名和密码参数来使用代理身份验证：
 
 ```python
 proxies = { 'http': 'http://username:password@host:port' }
 ```
 
-
 ```python
-
-# WebSocket API Client
+# WebSocket API 客户端
 from binance.websocket.spot.websocket_api import SpotWebsocketAPIClient
 
 def message_handler(_, message):
     logging.info(message)
 
-proxies = { 'http': 'http://1.2.3.4:8080' }
+proxies = { 'http': '
+
+http://1.2.3.4:8080' }
 
 my_client = SpotWebsocketAPIClient(on_message=message_handler, proxies=proxies, timeout=10)
 
@@ -313,8 +313,7 @@ my_client.stop()
 ```
 
 ```python
-
-# WebSocket Stream Client
+# WebSocket 流客户端
 from binance.websocket.spot.websocket_stream import SpotWebsocketStreamClient
 
 def message_handler(_, message):
@@ -324,34 +323,34 @@ proxies = { 'http': 'http://1.2.3.4:8080' }
 
 my_client = SpotWebsocketStreamClient(on_message=message_handler, proxies=proxies, timeout=10)
 
-# Subscribe to a single symbol stream
+# 订阅单个符号流
 my_client.agg_trade(symbol="bnbusdt")
 time.sleep(5)
 logging.info("closing ws connection")
 my_client.stop()
 ```
 
-#### Request Id
+### 请求 ID
 
-Client can assign a request id to each request. The request id will be returned in the response message. Not mandatory in the library, it generates a uuid format string if not provided.
+客户端可以为每个请求分配一个请求 ID。请求 ID 将在响应消息中返回。在库中不是强制性的，如果未提供则生成一个 uuid 格式字符串。
 
 ```python
-# id provided by client
+# 客户端提供的 id
 my_client.ping_connectivity(id="my_request_id")
 
-# library will generate a random uuid string
+# 库将生成一个随机的 uuid 字符串
 my_client.ping_connectivity()
 ```
 
-#### Combined Streams
-- If you set `is_combined` to `True`, `"/stream/"` will be appended to the `baseURL` to allow for Combining streams.
-- `is_combined` defaults to `False` and `"/ws/"` (raw streams) will be appended to the `baseURL`.
+### 组合流
 
-More websocket examples are available in the `examples` folder.
+如果将 `is_combined` 设置为 `True`，将会将 "/stream/" 附加到 `baseURL` 以允许组合流。
+`is_combined` 默认为 `False`，将会将 "/ws/"（原始流）附加到 `baseURL`。
+更多 websocket 示例可在 `examples` 文件夹中找到。
 
-Example file "examples/websocket_api/app_demo.py" demonstrates how Websocket API and Websocket Stream can be used together.
+示例文件 `examples/websocket_api/app_demo.py` 演示了如何一起使用 Websocket API 和 Websocket Stream。
 
-### Connector v1 and v2
+### 连接器 v1 和 v2
 
 ```python
 from binance.websocket.spot.websocket_client import SpotWebsocketClient as WebsocketClient
@@ -368,7 +367,7 @@ ws_client.mini_ticker(
     callback=message_handler,
 )
 
-# Combine selected streams
+# 组合选择的流
 ws_client.instant_subscribe(
     stream=['bnbusdt@bookTicker', 'ethusdt@bookTicker'],
     callback=message_handler,
@@ -377,12 +376,11 @@ ws_client.instant_subscribe(
 ws_client.stop()
 ```
 
-### Heartbeat
+### 心跳
 
-Once connected, the websocket server sends a ping frame every 3 minutes and requires a response pong frame back within
-a 10 minutes period. This package handles the pong responses automatically.
+一旦连接，websocket 服务器每 3 分钟发送一个 ping 帧，并要求在 10 分钟内返回一个 pong 帧。此包会自动处理 pong 响应。
 
-### Testnet
+### 测试网络
 
 ```python
 from binance.websocket.spot.websocket_client import SpotWebsocketClient as WebsocketClient
@@ -390,25 +388,28 @@ from binance.websocket.spot.websocket_client import SpotWebsocketClient as Webso
 ws_client = WebsocketClient(stream_url='wss://testnet.binance.vision')
 ```
 
-## Test Case
+### 测试用例
 
-```python
-# In case packages are not installed yet
+```bash
+# 如果包尚未安装
 pip install -r requirements/requirements-test.txt
 
 python -m pytest tests/
 ```
 
-## Limitation
+### 限制
 
-Futures and Vanilla Options APIs are not supported:
-  - `/fapi/*`
-  - `/dapi/*`
-  - `/vapi/*`
-  -  Associated Websocket Market and User Data Streams
+不支持期货和普通期权 API：
 
-## Contributing
+- `/fapi/*`
+- `/dapi/*`
+- `/vapi/*`
+- 相关的 Websocket 市场和用户数据流
 
-Contributions are welcome.<br/>
-If you've found a bug within this project, please open an issue to discuss what you would like to change.<br/>
-If it's an issue with the API, please open a topic at [Binance Developer Community](https://dev.binance.vision)
+### 贡献
+
+欢迎贡献。
+如果你在这个项目中发现了 bug，请打开一个 issue 讨论你想要更改的内容。
+如果是 API 的问题，请在 Binance 开发者社区中打开一个主题。
+
+---
